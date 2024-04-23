@@ -10,9 +10,7 @@ class ScreenMainPage extends StatelessWidget {
 
   final _pages = [
     chats.ChatScreen(
-      activeUsers: chats.activeUsers,
-      userImages: chats.userImages,
-      archivedChats: chats.archivedChats,
+    
     ),
     ScreenUpdate(
       StatusImage: StatusImage,

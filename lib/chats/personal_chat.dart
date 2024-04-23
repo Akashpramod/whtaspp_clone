@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:hive/hive.dart';
+import 'package:whatsapp_clone/chats/database.dart';
 
 class PersonalChat extends StatefulWidget {
-  final String userImages;
-  final String userName;
+  PersonalChat({Key? key, required this.index}) : super(key: key);
 
-  const PersonalChat({required this.userImages, required this.userName});
+  final int index;
 
   @override
   _PersonalChatState createState() => _PersonalChatState();
 }
 
 class _PersonalChatState extends State<PersonalChat> {
-  final List<String> _messages = [];
+  List<String> messages = [];
   final TextEditingController _textEditingController = TextEditingController();
 
   @override
@@ -21,25 +21,21 @@ class _PersonalChatState extends State<PersonalChat> {
     _loadMessages();
   }
 
-  Future<void> _loadMessages() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    setState(() {
-      _messages.addAll(prefs.getStringList('messages') ?? []);
-    });
+  void _loadMessages() async {
+    final box = await Hive.openBox<List<String>>('messages_box');
+    messages = List<String>.from(box.get(widget.index.toString()) ?? []);
+    setState(() {});
   }
 
-  Future<void> _saveMessages() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setStringList('messages', _messages);
-  }
-
-  void _sendMessage(String message) {
+  void _sendMessage(String message) async {
     if (message.isNotEmpty) {
-      setState(() {
-        _messages.add(message);
-      });
+      messages.add(message);
       _textEditingController.clear();
-      _saveMessages();
+
+      final box = await Hive.openBox<List<String>>('messages_box');
+      box.put(widget.index.toString(), messages);
+
+      setState(() {});
     }
   }
 
@@ -51,13 +47,17 @@ class _PersonalChatState extends State<PersonalChat> {
         title: Row(
           children: [
             CircleAvatar(
-              backgroundImage: NetworkImage(widget.userImages),
+              backgroundImage: NetworkImage(whatsapp[widget.index]["Dp"]),
               radius: 20,
             ),
             SizedBox(width: 8.0),
             Text(
-              widget.userName,
-              style: TextStyle(fontStyle: FontStyle.italic, fontSize: 18, color: Colors.white),
+              whatsapp[widget.index]["name"],
+              style: TextStyle(
+                fontStyle: FontStyle.italic,
+                fontSize: 18,
+                color: Colors.white,
+              ),
             ),
           ],
         ),
@@ -80,7 +80,7 @@ class _PersonalChatState extends State<PersonalChat> {
         children: [
           Expanded(
             child: ListView.builder(
-              itemCount: _messages.length,
+              itemCount: messages.length,
               itemBuilder: (context, index) {
                 return ListTile(
                   title: Container(
@@ -90,7 +90,7 @@ class _PersonalChatState extends State<PersonalChat> {
                       borderRadius: BorderRadius.circular(7.0),
                     ),
                     child: Text(
-                      _messages[index],
+                      messages[index],
                       style: TextStyle(color: Colors.black),
                     ),
                   ),
@@ -130,7 +130,6 @@ class _PersonalChatState extends State<PersonalChat> {
                           ],
                         ),
                       ),
-                      onSubmitted: _sendMessage,
                     ),
                   ),
                 ),

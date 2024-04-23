@@ -1,19 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:whatsapp_clone/chats/achivedScreen.dart';
+import 'package:whatsapp_clone/chats/database.dart';
 import 'package:whatsapp_clone/chats/personal_chat.dart';
 import 'package:whatsapp_clone/chats/slectedcontact.dart';
 import 'package:whatsapp_clone/constant.dart';
 import 'package:whatsapp_clone/custome/appbar.dart';
 
 class ChatScreen extends StatelessWidget {
-  final List<String> activeUsers;
-  final List<String> userImages;
-  final List<String> archivedChats; 
+  
   const ChatScreen({
     Key? key,
-    required this.activeUsers,
-    required this.userImages,
-    required this.archivedChats,
+   
   }) : super(key: key);
 
   @override
@@ -54,15 +51,15 @@ class ChatScreen extends StatelessWidget {
               itemBuilder: (context, index) {
                 return ListTile(
                   onTap: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => PersonalChat(userImages: userImages[index], userName: activeUsers[index],),));
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => PersonalChat(index: index,),));
                   },
                   leading: CircleAvatar(
                     radius: 30,
-                    backgroundImage: NetworkImage(userImages[index]),
+                    backgroundImage: NetworkImage(whatsapp[index]["Dp"]),
                   ),
-                  title: Text(activeUsers[index],
+                  title: Text(whatsapp[index]["name"],
                       style: const TextStyle(color: Colors.black)),
-                  subtitle:  Text(data[index],style: TextStyle(fontWeight: FontWeight.w500) ,),
+                  subtitle:  Text(whatsapp[index]["recent"],style: TextStyle(fontWeight: FontWeight.w500) ,),
                   trailing: Column(
                     children: [
                       
@@ -77,7 +74,7 @@ class ChatScreen extends StatelessWidget {
                   minVerticalPadding: 25,
                 );
               },
-              itemCount: activeUsers.length,
+              itemCount: whatsapp.length,
             ),
           ],
         ),
@@ -94,41 +91,7 @@ class ChatScreen extends StatelessWidget {
   }
 }
 
-List<String> activeUsers = [
-  'Sharukh',
-  'vijay',
-  'AlluArjun',
-  'Srya',
-  'Danush',
-  'Mohanlal',
-  'Mammootty',
-  'Ajith',
-  'Dq',
-];
 
-List<String> userImages = [
-  'https://4.bp.blogspot.com/-CCW346J8k7Y/VwgAIHGxSvI/AAAAAAAAE1o/KMFbHMkgqQkOrgJZGl8V29IYc2eNy2dAA/s1600/Shah-Rukh-Khan-HD-Wallpaper-Download.jpg',
-  'https://th.bing.com/th/id/OIP.os0rOpkR4LShqGJKBNmXHQAAAA?rs=1&pid=ImgDetMain',
-  'https://1.bp.blogspot.com/-E9BFcqb0XNg/XvNhVJH7YBI/AAAAAAABD4M/Id2OlZSIn-At29Tb7QZTqLjDIy_tE5g7gCK4BGAsYHg/s2048/allu-arjun-unseen-stills-from%2B-dj%2B%25281%2529.jpg',
-  'https://th.bing.com/th/id/OIP.jnFj6yB3bi3C-EKuuv8_rwHaHX?rs=1&pid=ImgDetMain',
-  'https://th.bing.com/th/id/OIP.2JUq1SUxNXI-iK1ncXQQFgAAAA?rs=1&pid=ImgDetMain',
-  'https://th.bing.com/th/id/OIP.jEKmYi2ojP6lsp8AqmlLzwHaHj?w=1000&h=1020&rs=1&pid=ImgDetMain',
-  'https://th.bing.com/th/id/OIP.S_b3v8Wf5LtjHiszY9HwhQHaHv?w=512&h=598&rs=1&pid=ImgDetMain',
-  'https://th.bing.com/th/id/OIP.jq3-CT46TjlXQJuaeYYNbAHaHv?w=1080&h=1130&rs=1&pid=ImgDetMain',
-  'https://th.bing.com/th/id/OIP.XDQV7wwEE4SJGZzJkjuEUwAAAA?w=204&h=204&rs=1&pid=ImgDetMain',
-];
-
-List<String>data =[
-"Don't forget, we havem a meeting",
-"Just saw this ",
-"Hey, do you have any plans today",
-"Remember to pick up milk ",
-"I'm so proud of you ",
-"please send me the report ",
-"Let's grab lunch together ",
-"I need your advice ",
-"Sending virtual hugs your way,",
-];
 
 List<String> archivedChats = []; 
 
